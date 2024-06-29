@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  back-end:
+    build: 
+      context: server
+    container_name: back-end
+    working_dir: /usr/src/app
+    tty: true
+    ports: 
+      - "3000:3000"
+    expose:
+      - "3000"
+    command: npm start
+    networks: 
+      - app-net
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: ejemplodb
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks: 
+      - app-net
+
+  postgres_exporter:
+    image: wrouesnel/postgres_exporter
+    container_name: postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:pass123@db:5432/ejemplodb?sslmode=disable"
+    depends_on:
+      - db
+    ports:
+      - "9187:9187"
+    networks:
+      - app-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-net
+      
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    name: app-net
+    driver: bridge
+
