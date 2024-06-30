@@ -57,7 +57,7 @@ services:
       - app-net
   
   nginx:
-     build: 
+    build: 
       context: nginx
     container_name: nginx
     restart: always
@@ -67,6 +67,8 @@ services:
       - back-end
       - grafana
       - prometheus
+    networks:
+      - app-net
 
 networks:
   app-net:
