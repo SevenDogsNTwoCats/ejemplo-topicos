@@ -61,12 +61,25 @@ services:
       context: nginx
     container_name: nginx
     restart: always
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/html:/usr/share/nginx/html
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - back-end
       - grafana
       - prometheus
+    networks:
+      - app-net
+
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./nginx/certs:/etc/letsencrypt
+      - ./nginx/html:/var/www/html
     networks:
       - app-net
 
