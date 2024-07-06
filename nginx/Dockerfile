@@ -6,3 +6,4 @@ RUN mkdir /etc/letsencrypt
 COPY default.conf /etc/nginx/conf.d/default.conf
 
 certbot --nginx -d ejemplo.alhanisespinal.tech -d www.ejemplo.alhanisespinal.tech
+
